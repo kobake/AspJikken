@@ -3,14 +3,18 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AspJikken.Models
 {
-    public class ExternalLoginConfirmationViewModel
-    {
-        [Required]
-        [Display(Name = "電子メール")]
-        public string Email { get; set; }
-    }
+	public class ExternalLoginConfirmationViewModel
+	{
+		[Required]
+		[Display(Name = "電子メール")]
+		public string Email { get; set; }
 
-    public class ExternalLoginListViewModel
+		[Required]
+		[Display(Name = "ほげ1")]
+		public string Hoge { get; set; }
+	}
+
+	public class ExternalLoginListViewModel
     {
         public string ReturnUrl { get; set; }
     }

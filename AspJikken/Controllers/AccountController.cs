@@ -151,7 +151,7 @@ namespace AspJikken.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+				var user = new ApplicationUser { UserName = model.Email, Email = model.Email, Hoge = "normalhoge" };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -343,7 +343,7 @@ namespace AspJikken.Controllers
                     // ユーザーがアカウントを持っていない場合、ユーザーにアカウントを作成するよう求めます
                     ViewBag.ReturnUrl = returnUrl;
                     ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
-                    return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = loginInfo.Email });
+                    return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = loginInfo.Email, Hoge = "hogedesu" });
             }
         }
 
@@ -367,7 +367,7 @@ namespace AspJikken.Controllers
                 {
                     return View("ExternalLoginFailure");
                 }
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+				var user = new ApplicationUser { UserName = model.Email, Email = model.Email, Hoge = model.Hoge };
                 var result = await UserManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
