@@ -6,6 +6,10 @@ using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Google;
 using Owin;
 using AspJikken.Models;
+using Microsoft.Owin.Security.Twitter;
+using System.Security.Claims;
+using System.Configuration;
+using Microsoft.Owin.Security;
 
 namespace AspJikken
 {
@@ -46,23 +50,49 @@ namespace AspJikken
             app.UseTwoFactorRememberBrowserCookie(DefaultAuthenticationTypes.TwoFactorRememberBrowserCookie);
 
             // 次の行のコメントを解除して、サード パーティのログイン プロバイダーを使用したログインを有効にします
-            //app.UseMicrosoftAccountAuthentication(
-            //    clientId: "",
-            //    clientSecret: "");
+            app.UseMicrosoftAccountAuthentication(
+                clientId: "a",
+                clientSecret: "a");
 
-            //app.UseTwitterAuthentication(
-            //   consumerKey: "",
-            //   consumerSecret: "");
+			// 参考：https://github.com/VSShare/VSShare-Server/blob/master/App_Start/Startup.Auth.cs
+			app.UseTwitterAuthentication(
+				new TwitterAuthenticationOptions()
+				{
+					// ※ここは本当は直値ではなくConfigurationManager.AppSettingsを使って取得するのがたぶん良い.
+					ConsumerKey = "FCHx1ibwVqLjbhrE2dRJs0jCP",
+					ConsumerSecret = "vF2lqJTgPp03FzGgmtQqczrgC0vE6dEv4SpZmJsjQfngyvJ0dm",
+					Provider = new TwitterAuthenticationProvider
+					{
+#pragma warning disable CS1998 // 非同期メソッドは、'await' 演算子がないため、同期的に実行されます
+						OnAuthenticated = async context =>
+						{
+							context.Identity.AddClaim(new Claim("urn:tokens:twitter:accesstoken", context.AccessToken));
+							context.Identity.AddClaim(new Claim("urn:tokens:twitter:accesstokensecret",
+								context.AccessTokenSecret));
+						}
+#pragma warning restore CS1998 // 非同期メソッドは、'await' 演算子がないため、同期的に実行されます
+					},
+					BackchannelCertificateValidator = new CertificateSubjectKeyIdentifierValidator(new[]
+					{
+						"A5EF0B11CEC04103A34A659048B21CE0572D7D47",
+						"0D445C165344C1827E1D20AB25F40163D8BE79A5",
+						"7FD365A7C2DDECBBF03009F34339FA02AF333133",
+						"39A55D933676616E73A761DFA16A7E59CDE66FAD",
+						"4eb6d578499b1ccf5f581ead56be3d9b6744a5e5",
+						"5168FF90AF0207753CCCD9656462A212B859723B",
+						"B13EC36903F8BF4701D498261A0802EF63642BC3"
+					})
+				});
 
-            //app.UseFacebookAuthentication(
-            //   appId: "",
-            //   appSecret: "");
+			app.UseFacebookAuthentication(
+               appId: "a",
+               appSecret: "a");
 
-            //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
-            //{
-            //    ClientId = "",
-            //    ClientSecret = ""
-            //});
+            app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
+            {
+                ClientId = "a",
+                ClientSecret = "a"
+            });
         }
     }
 }
